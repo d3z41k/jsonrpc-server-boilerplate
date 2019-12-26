@@ -1,14 +1,24 @@
 package services
 
+import (
+	"fmt"
+
+	"github.com/d3z41k/jsonrpc-server-boilerplate/models"
+)
+
 type Filter struct {
-	UID int
+	UID uint
 }
 
 type TradesService struct{}
 
-func (hm *TradesService) getCountTrades(in *Filter, out *string) error {
+func (ts *TradesService) GetCountTrades(in *Filter, out *int) error {
 	fmt.Println("call getCountTrades", in)
 
-	*out = "Hello " + in.Name + ", your age is " + strconv.Itoa(in.Age) + "."
+	data := models.GetTradesByUID(in.UID)
+
+	fmt.Println(len(data))
+
+	*out = len(data)
 	return nil
 }

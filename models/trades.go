@@ -2,13 +2,10 @@ package models
 
 import (
 	"fmt"
-
-	"github.com/jinzhu/gorm"
 )
 
 // Trades is a struct
 type Trades struct {
-	gorm.Model
 	ID            int `sql:"AUTO_INCREMENT" gorm:"primary_key"`
 	Ticket        string
 	UID           uint
@@ -21,8 +18,8 @@ type Trades struct {
 	UpdatedAt     string `sql:"null"`
 }
 
-// GetTrades return user trades by UID
-func GetTrades(UID uint) []*Trades {
+// GetTradesByUID return user trades by UID
+func GetTradesByUID(UID uint) []*Trades {
 	trades := make([]*Trades, 0)
 	err := GetDB().Table("trades").Where("uid = ?", UID).Find(&trades).Error
 	if err != nil {
@@ -31,4 +28,16 @@ func GetTrades(UID uint) []*Trades {
 	}
 
 	return trades
+}
+
+// GetTradeByID return user trade by ID
+func GetTradeByID(ID int) *Trades {
+	trade := &Trades{}
+	err := GetDB().Table("trades").First(trade, ID).Error
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+
+	return trade
 }

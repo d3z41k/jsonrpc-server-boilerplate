@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/joho/godotenv"
 )
 
@@ -23,7 +24,7 @@ func init() {
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
 
-	dsn := fmt.Sprintf("%s:%s(%s:%s)/%s?", dbUser, dbPassword, dbHost, dbPort, dbName)
+	dsn := fmt.Sprintf("%s:%s@(%s:%s)/%s?", dbUser, dbPassword, dbHost, dbPort, dbName)
 	dsn += "&charset=utf8"
 	dsn += "&interpolateParams=true"
 	dsn += "&parseTime=true"
@@ -32,7 +33,6 @@ func init() {
 	fmt.Println(dsn)
 
 	conn, err := gorm.Open("mysql", dsn)
-	defer conn.Close()
 
 	if err != nil {
 		fmt.Print(err)

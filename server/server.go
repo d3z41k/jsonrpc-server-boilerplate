@@ -59,7 +59,7 @@ func NewRouter() http.Handler {
 
 	server := rpc.NewServer()
 	server.Register(&services.HelloService{})
-
+	server.Register(&services.TradesService{})
 	helloHandler := &Handler{
 		rpcServer: server,
 	}
