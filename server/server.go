@@ -1,16 +1,14 @@
 package server
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"net/rpc"
 	"net/rpc/jsonrpc"
-	"strconv"
-	"sync"
 	"time"
 
+	"github.com/d3z41k/jsonrpc-server-boilerplate/services"
 	u "github.com/d3z41k/jsonrpc-server-boilerplate/utils"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -55,37 +53,12 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type Name struct {
-	Name string
-	Age  int
-}
-
-type HelloManager struct {
-	mu sync.RWMutex
-}
-
-func NewHelloManager() *HelloManager {
-	return &HelloManager{
-		mu: sync.RWMutex{},
-	}
-}
-func (hm *HelloManager) Hello(in *Name, out *string) error {
-	fmt.Println("call Hello", in)
-	// hm.mu.Lock()
-	// defer hm.mu.Unlock()
-
-	*out = "Hello " + in.Name + ", your age is " + strconv.Itoa(in.Age) + "."
-	return nil
-}
-
-// NewRouter return HTTP handler that implements the main server routers
+// NewRouter return JSON-RPC handler over HTTP that implements the main server routers
 func NewRouter() http.Handler {
 	router := chi.NewRouter()
 
-	helloManager := NewHelloManager()
-
 	server := rpc.NewServer()
-	server.Register(helloManager)
+	server.Register(&services.HelloService{})
 
 	helloHandler := &Handler{
 		rpcServer: server,
