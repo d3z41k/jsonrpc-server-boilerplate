@@ -15,7 +15,11 @@ type TradesService struct{}
 func (ts *TradesService) GetCountTrades(in *Filter, out *int) error {
 	fmt.Println("call getCountTrades", in)
 
-	data := models.GetTradesByUID(in.UID)
+	filter := make(map[string]interface{})
+
+	filter["uid"] = in.UID
+
+	data := models.GetTradesByFilter(filter)
 
 	fmt.Println(len(data))
 

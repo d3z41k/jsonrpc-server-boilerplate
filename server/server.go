@@ -60,7 +60,7 @@ func NewRouter() http.Handler {
 	server := rpc.NewServer()
 	server.Register(&services.HelloService{})
 	server.Register(&services.TradesService{})
-	helloHandler := &Handler{
+	rpcHandler := &Handler{
 		rpcServer: server,
 	}
 
@@ -71,7 +71,7 @@ func NewRouter() http.Handler {
 	router.Use(middleware.Timeout(60 * time.Second))
 
 	// Set up root handler
-	router.Handle("/rpc", helloHandler)
+	router.Handle("/rpc", rpcHandler)
 
 	return router
 }

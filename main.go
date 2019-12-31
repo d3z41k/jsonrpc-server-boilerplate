@@ -2,22 +2,15 @@ package main
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
 
 	"github.com/d3z41k/jsonrpc-server-boilerplate/server"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
 	rpcPort := os.Getenv("RPC_PORT")
 
 	handler := server.NewRouter()

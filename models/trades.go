@@ -18,10 +18,32 @@ type Trades struct {
 	UpdatedAt     string `sql:"null"`
 }
 
-// GetTradesByUID return user trades by UID
-func GetTradesByUID(UID uint) []*Trades {
+// GetTradesByFilter return user trades by custome filter
+func GetTradesByFilter(filter map[string]interface{}) []*Trades {
 	trades := make([]*Trades, 0)
-	err := GetDB().Table("trades").Where("uid = ?", UID).Find(&trades).Error
+	query := GetDB().Table("trades")
+
+	if _, ok := filter["id"]; ok {
+		query = query.Where("id = ?", filter["id"])
+	}
+	if _, ok := filter["uid"]; ok {
+		query = query.Where("uid = ?", filter["uid"])
+	}
+
+	err := query.Find(&trades).Error
+
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+
+	return trades
+}
+
+// GetTradesByUID return user trades by UID
+func GetTradesByUID(uid uint) []*Trades {
+	trades := make([]*Trades, 0)
+	err := GetDB().Table("trades").Where("uid = ?", uid).Find(&trades).Error
 	if err != nil {
 		fmt.Println(err)
 		return nil
@@ -31,9 +53,9 @@ func GetTradesByUID(UID uint) []*Trades {
 }
 
 // GetTradeByID return user trade by ID
-func GetTradeByID(ID int) *Trades {
+func GetTradeByID(id int) *Trades {
 	trade := &Trades{}
-	err := GetDB().Table("trades").First(trade, ID).Error
+	err := GetDB().Table("trades").First(trade, id).Error
 	if err != nil {
 		fmt.Println(err)
 		return nil
