@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/rpc"
 	"net/rpc/jsonrpc"
+	"os"
 	"time"
 
 	"github.com/d3z41k/jsonrpc-server-boilerplate/services"
@@ -30,11 +31,20 @@ type Handler struct {
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// fmt.Println("rpc auth: ", r.Header.Get("X-Auth"))
+
+	// // Loop over header names
+	// for name, values := range r.Header {
+	// 	// Loop over all values for the name.
+	// 	for _, value := range values {
+	// 		fmt.Println(name, value)
+	// 	}
+	// }
 
 	ip, _ := u.GetIP(r)
+	token := r.Header.Get("X-Auth")
 
-	if !u.Contains(acceptIps, ip) {
+	// Temp hardcode token
+	if !u.Contains(acceptIps, ip) || token != os.Getenv("TOKEN_PASSWORD") {
 		w.WriteHeader(403)
 		return
 	}
