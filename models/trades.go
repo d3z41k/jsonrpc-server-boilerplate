@@ -29,6 +29,21 @@ func GetTradesByFilter(filter map[string]interface{}) []*Trades {
 	if _, ok := filter["uid"]; ok {
 		query = query.Where("uid = ?", filter["uid"])
 	}
+	if _, ok := filter["uids"]; ok {
+		query = query.Where("uid IN (?)", filter["uids"])
+	}
+	if _, ok := filter["symbol"]; ok {
+		query = query.Where("symbol = ?", filter["symbol"])
+	}
+	if _, ok := filter["symbols"]; ok {
+		query = query.Where("symbols IN (?)", filter["symbols"])
+	}
+	if _, ok := filter["dateFrom"]; ok {
+		query = query.Where("created_at >= ?", filter["dateFrom"])
+	}
+	if _, ok := filter["dateTo"]; ok {
+		query = query.Where("created_at <= ?", filter["dateTo"])
+	}
 
 	err := query.Find(&trades).Error
 
