@@ -2,6 +2,8 @@ package models
 
 import (
 	"fmt"
+
+	"github.com/jinzhu/gorm"
 )
 
 // Trades is a struct
@@ -23,13 +25,7 @@ func GetTradesByFilter(filter map[string]interface{}) []*Trades {
 	trades := make([]*Trades, 0)
 	query := GetDB().Table("trades")
 
-	if _, ok := filter["id"]; ok {
-		query = query.Where("id = ?", filter["id"])
-	}
-	if _, ok := filter["uid"]; ok {
-		query = query.Where("uid = ?", filter["uid"])
-	}
-
+	query = applyFilter(query, filter)
 	err := query.Find(&trades).Error
 
 	if err != nil {
@@ -62,4 +58,30 @@ func GetTradeByID(id int) *Trades {
 	}
 
 	return trade
+}
+
+func applyFilter(q *gorm.DB, f map[string]interface{}) *gorm.DB {
+	if _, ok := f["id"]; ok {
+		q = q.Where("id = ?", f["id"])
+	}
+	if _, ok := f["uid"]; ok {
+		q = q.Where("uid = ?", f["uid"])
+	}
+	if _, ok := f["uids"]; ok {
+		q = q.Where("uid IN (?)", f["uids"])
+	}
+	if _, ok := f["symbol"]; ok {
+		q = q.Where("symbol = ?", f["symbol"])
+	}
+	if _, ok := f["symbols"]; ok {
+		q = q.Where("symbols IN (?)", f["symbols"])
+	}
+	if _, ok := f["dateFrom"]; ok {
+		q = q.Where("created_at >= ?", f["dateFrom"])
+	}
+	if _, ok := f["dateTo"]; ok {
+		q = q.Where("created_at <= ?", f["dateTo"])
+	}
+
+	return q
 }
