@@ -26,6 +26,7 @@ func GetTradesByFilter(filter map[string]interface{}) []*Trades {
 	query := GetDB().Table("trades")
 
 	query = applyFilter(query, filter)
+
 	err := query.Find(&trades).Error
 
 	if err != nil {
